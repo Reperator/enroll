@@ -24,7 +24,7 @@
 
 #define info(fmt, ...)\
     do {\
-        fprintf(stdout, COLOR_BLUE "[INFO] " fmt COLOR_RESET "\n", ##__VA_ARGS__);\
+        fprintf(stdout, COLOR_CYAN "[INFO] " fmt COLOR_RESET "\n", ##__VA_ARGS__);\
     } while (0)
 
 void print_hash(uint8_t *md, uint32_t md_len);
