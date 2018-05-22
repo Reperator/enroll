@@ -5,11 +5,15 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <time.h>
-#include <netinet/ip.h>
 #include <netdb.h>
 #include <pthread.h>
 #include <stdbool.h>
 #include <fcntl.h>
+#include <arpa/inet.h>
+
+#ifdef __FreeBSD__
+#include <netinet/in.h>
+#endif
 
 #include <openssl/opensslv.h>
 #include <openssl/crypto.h>
@@ -47,7 +51,7 @@ size_t payload_size;
 float *hash_rates;
 
 long get_cpus() {
-#if defined(__linux__) || defined(__APPLE__)
+#if defined(__linux__) || defined(__APPLE__) || defined(__FreeBSD__)
     long num_cpus = sysconf(_SC_NPROCESSORS_ONLN);
     if (num_cpus > 0)
         return num_cpus;
