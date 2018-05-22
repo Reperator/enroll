@@ -13,18 +13,18 @@
 
 #define error(fmt, ...)\
     do {\
-        fprintf(stderr, COLOR_RED "[ERROR (%s, %s:%d)] " fmt "\n", __func__, __FILE__, __LINE__, ##__VA_ARGS__);\
+        fprintf(stderr, COLOR_RED "[ERROR (%s, %s:%d)] " fmt COLOR_RESET "\n", __func__, __FILE__, __LINE__, ##__VA_ARGS__);\
         exit(EXIT_FAILURE);\
     } while (0)
 
 #define warn(fmt, ...)\
     do {\
-        fprintf(stderr, COLOR_YELLOW "[WARNING] " fmt "\n", ##__VA_ARGS__);\
+        fprintf(stderr, COLOR_YELLOW "[WARNING] " fmt COLOR_RESET "\n", ##__VA_ARGS__);\
     } while (0)
 
 #define info(fmt, ...)\
     do {\
-        fprintf(stdout, COLOR_BLUE "[INFO] " fmt "\n", ##__VA_ARGS__);\
+        fprintf(stdout, COLOR_BLUE "[INFO] " fmt COLOR_RESET "\n", ##__VA_ARGS__);\
     } while (0)
 
 void print_hash(uint8_t *md, uint32_t md_len);
