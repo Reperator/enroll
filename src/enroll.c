@@ -1,42 +1,4 @@
-#include <stdio.h>
-#include <string.h>
-#include <inttypes.h>
-#include <unistd.h>
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <time.h>
-#include <netdb.h>
-#include <pthread.h>
-#include <stdbool.h>
-#include <fcntl.h>
-#include <arpa/inet.h>
-
-#ifdef __FreeBSD__
-#include <netinet/in.h>
-#endif
-
-#include <openssl/opensslv.h>
-#include <openssl/crypto.h>
-#include <openssl/evp.h>
-
-#include "log.h"
-#include "protocol.h"
-
-#define HOST "fulcrum.net.in.tum.de"
-#define PORT 34151
-
-#define TIME(x) (1000000 * (uint64_t) (x).tv_sec) + ((uint64_t) (x).tv_nsec / 1000)
-
-#define USAGE \
-    "Usage: enroll "\
-    "-f firstname "\
-    "-l lastname "\
-    "-e email "\
-    "-p [DHT|RPS|NSE|Onion] "\
-    "[-d] "\
-    "[-t team] "\
-    "[-T num_threads] "\
-    "[-c challenge]"\
+#include "enroll.h"
 
 char *email = NULL, *first = NULL, *last = NULL;
 uint16_t team = 0, project;
@@ -50,7 +12,7 @@ size_t payload_size;
 
 float *hash_rates;
 
-long get_cpus() {
+long get_cpus(void) {
 #if defined(__linux__) || defined(__APPLE__) || defined(__FreeBSD__)
     long num_cpus = sysconf(_SC_NPROCESSORS_ONLN);
     if (num_cpus > 0)
@@ -59,8 +21,6 @@ long get_cpus() {
     warn("cannot get number of CPUs; defaulting to 1");
     return 1;
 }
-
-typedef uint8_t* __attribute__((__may_alias__)) u8_a;
 
 void *brute_force(void *arg) {
     uint64_t const thread_id = *((uint64_t *) arg);
