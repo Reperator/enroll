@@ -60,6 +60,8 @@ long get_cpus() {
     return 1;
 }
 
+typedef uint8_t* __attribute__((__may_alias__)) u8_a;
+
 void *brute_force(void *arg) {
     uint64_t const thread_id = *((uint64_t *) arg);
     free(arg);
@@ -75,6 +77,7 @@ void *brute_force(void *arg) {
         strlen(constant_payload));
 
     uint8_t md[EVP_MAX_MD_SIZE];
+    u8_a md_a = md;
     uint32_t md_len;
     EVP_MD_CTX *ctx = EVP_MD_CTX_new();
     const EVP_MD *sha256 = EVP_sha256();
@@ -102,9 +105,9 @@ void *brute_force(void *arg) {
                 info("%.03f MH/s", total_rate);
             }
         }
-    } while (*((uint32_t *) md) != 0 && !nonce);
+    } while (*((uint32_t *) md_a) != 0 && !nonce);
 
-    if (*((uint32_t *) md) == 0) {
+    if (*((uint32_t *) md_a) == 0) {
         info("thread %" PRIu64 " found valid nonce %#018" PRIx64, thread_id, header->nonce);
         nonce = header->nonce;
         print_hash(md, md_len);
@@ -280,6 +283,7 @@ int main(int argc, char **argv) {
     }
 
     uint8_t md[EVP_MAX_MD_SIZE];
+    u8_a md_a = md;
     uint32_t md_len;
     EVP_MD_CTX *ctx = EVP_MD_CTX_new();
     EVP_DigestInit_ex(ctx, EVP_sha256(), NULL);
@@ -287,7 +291,7 @@ int main(int argc, char **argv) {
     EVP_DigestFinal_ex(ctx, md, &md_len);
 
     print_hash(md, md_len);
-    if (*((uint32_t *) md) == 0)
+    if (*((uint32_t *) md_a) == 0)
         info("sanity check successful");
     else
         error("sanity check failed!");
