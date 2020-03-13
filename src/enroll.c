@@ -44,7 +44,7 @@ void *brute_force(void *arg) {
 
     uint64_t hash_count = 0;
     struct timespec time;
-    if (clock_gettime(CLOCK_MONOTONIC, &time))
+    if (clock_gettime(CLOCK_REALTIME, &time))
         warn("could not get time");
     uint64_t start_time = TIME(time), time_diff;
 
@@ -54,7 +54,7 @@ void *brute_force(void *arg) {
         EVP_DigestUpdate(ctx, packet, payload_size - sizeof(enroll_header));
         EVP_DigestFinal_ex(ctx, md, &md_len);
         if ((hash_count++ & 0x7fffff) == 0) {
-            if (clock_gettime(CLOCK_MONOTONIC, &time))
+            if (clock_gettime(CLOCK_REALTIME, &time))
                 warn("could not get time");
             time_diff = TIME(time) - start_time;
             hash_rates[thread_id] = ((float) hash_count) / ((float) time_diff);
